@@ -2,6 +2,28 @@
 import math  # https://docs.python.org/3/library/math.html
 
 
+def class Node:
+    def __init__(self,_x,_y,):
+        self.x=_x
+        self.y = _y
+        x.cost=0
+        x.heuristic = 0
+
+    def getHeuristic(self):
+        return self.heuristic
+
+
+
+def compare2Node(n1, n2):
+    if (n1.getHeuristic()<n2.getHeuristic()):
+        return 1
+    elif (n1.getHeuristic()==n2.getHeuristic()):
+        return 0
+    else
+        return -1
+
+
+
 def calcul_distance(first_point_value, second_point_value):
     """
         Distance between two points calculation
@@ -40,9 +62,14 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
     list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
     return a list of point to visit, starting from first_point.
     """
+    list_of_point_visited=[0]*len(list_of_points)
     p0 =first_point
     for i in range (len(list_of_points)):
+        distance_min = 0
         for j in range (len(list_of_points)):
+            if(calcul_distance(list_of_points.get(p0),list_of_points.get(j)<=distance_min)
+                
+
 
     return list(list_of_points.keys())
 
@@ -65,6 +92,8 @@ def optimal_algorithm(first_point, list_of_points):
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a list of point to visit, starting from first_point.
     """
+    closedList = file()
+    
 
     return list(list_of_points.keys())
 
