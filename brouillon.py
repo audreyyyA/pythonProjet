@@ -130,14 +130,63 @@ def calcul_circuit(list_of_points, cycle):
     #return chemin
     #return list(list_of_points.keys())'''
 
+class Tree(object):
+
+    def __init__(self, nom, children, list_of_points):
+        
+        self.nom = nom
+        self.children = children
+        self.list_of_points = list_of_points
+        print(self.nom)
+        print(self.children)
+
+    def builtTree(self):
+
+        if len(self.children) == 1:
+            newTree = Tree(self.children[0], None, self.list_of_points)
+            return 0 
+        if len(self.children) > 1:
+            i = 0
+            for i in range (len(self.children)):
+                l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                x=0
+                while(l[x] != self.children[i]):
+                    del l[0]
+                    x+=1
+                
+                del l[x]
+
+                newTree = Tree(self.children[i], l, self.list_of_points)
+                newTree.builtTree()
+
+    '''def betterRoad(self, cal):
+        
+        c.append(self.nom)
+        x = 0
+        for x in range (len(self.children)):
+            c.append(self.children[x])
+            self.nom = children[x]
+            cal2 = betterRoad(self) '''
+        
+    
+    def showTree(self):
+        print(self.nom)
+        print(self.children)
+
+def createLittleTree(i, l, list_of_points):
+    l2 = l.copy()
+    x=0
+    while(l2[x] != l[i]):
+        x+=1
+                
+    del l2[x]
+
+    newTree = Tree(l[i], l2, list_of_points)
 
 
 def optimal_algorithm(first_point, list_of_points):
     
     l = list(list_of_points.keys())
-    chemin = list()
-    chemin.append(first_point)
-    c = calcul_circuit(list_of_points, l)
 
     x = 0
     for x in range (len(l) - 1):
@@ -145,22 +194,13 @@ def optimal_algorithm(first_point, list_of_points):
             del l[x]
             break
     
+    '''for i in range (len(l)):
+        createLittleTree(i, l, list_of_points)'''
     
-    #créer une liste de liste toutes les listes sont suivies tout le long de l'algo...
-    x = 0
-    listlist = list_of_points.copy()
-    for x in range (len(listlist)):
-        l2 = l.copy()
-        listlist[x] = l2
-        del l2
     
-    del listlist[x]
-    print(listlist)
-
-    nb = 0
-    result = autreFonction(listlist, nb, l, chemin, list_of_points, c)
-
-    return result
+    newTree = Tree(first_point, l, list_of_points)
+    newTree.builtTree()
+    #return result
     #return list(list_of_points.keys())
 
 
