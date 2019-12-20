@@ -1,3 +1,4 @@
+
 # Your code should work with python 3.6 or less. Function/Method from python 3.8 are prohibited !!!
 import math  # https://docs.python.org/3/library/math.html
 
@@ -81,21 +82,20 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
     visitedPoints=list()
     visitedPoints.append(first_point)
     unvisited.remove(first_point)
-    point = first_point
+    a = first_point
+    min=calcul_distance(list_of_points.get(a),list_of_points.get(a))
 
+    
     while unvisited :
+        for b in range (len(unvisited)):
+            distance = calcul_distance(list_of_points.get(a),list_of_points.get(unvisited[b]))
+            if(min>distance or min==0):
+                min = distance
+                tmp = unvisited[b]
+        visitedPoints.append(tmp)
+        unvisited.remove(tmp)
         min=math.inf
-        for i in range (len(unvisited)):
-            print(list_of_points.get(unvisited[i]))
-            tmp = calcul_distance(list_of_points.get(point),list_of_points.get(unvisited[i]))
-            if(min>tmp):
-                min = tmp
-                point = list_of_points.get(unvisited[i])
-        visitedPoints.append(point)
-        unvisited.remove(point)
-        print(visitedPoints)
-
-
+        a=tmp
     return visitedPoints
 
      
@@ -156,7 +156,7 @@ def test_calcul_distance():
     b = (5, 2)
 
     assert round(calcul_distance(a, b), 3) == 8.944
-#test_calcul_distance()
+test_calcul_distance()
 
 def test_calcul_min_circuit():
     a = (-3, -2)
@@ -165,7 +165,7 @@ def test_calcul_min_circuit():
     cycle = ['a', 'b']
 
     assert round(calcul_circuit(list_of_points, cycle), 3) == 17.889
-#test_calcul_min_circuit()
+test_calcul_min_circuit()
 
 def test_calcul_circuit():
     list_of_points = get_small_list_of_points()
@@ -173,13 +173,14 @@ def test_calcul_circuit():
     cycle = list(list_of_points.keys())
     distance = calcul_circuit(list_of_points, cycle)
     assert round(distance, 3) == 38.483
-#test_calcul_circuit()
+test_calcul_circuit()
 
 def test_return_sized():
     list_of_points = get_small_list_of_points()
 
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
+    print(calcul_circuit(list_of_points,result))
     assert len(result) == 10
     assert result[0] == first_point
 test_return_sized()
@@ -192,8 +193,10 @@ def test_small_nearest_neighbor():
     result = nearest_neighbor_algorithm(first_point, list_of_points)
     assert len(result) == 10
     assert result[0] == first_point
+    print(result)
+    print(calcul_circuit(list_of_points,result))
     assert round(calcul_circuit(list_of_points, result)) <= 27
-
+test_small_nearest_neighbor()
 
 def test_big_nearest_neighbor():
     """I will test with a lot of points"""
