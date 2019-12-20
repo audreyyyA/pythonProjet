@@ -14,6 +14,7 @@ def calcul_distance(first_point_value, second_point_value):
     return d
 
 
+
 def calcul_circuit(list_of_points, cycle):
     
     res = 0
