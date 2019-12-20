@@ -36,99 +36,92 @@ def calcul_circuit(list_of_points, cycle):
     return result
 
 
-'''def great_algorithm(first_point, list_of_points):
+def great_algorithm(first_point, list_of_points):
     
     l = list(list_of_points.keys())
-    chemin = list()
-    chemin.append(first_point)
+    matrice = [0]*len(l)
+
+    i = 0
+    for i in range (len(l)): #génère une matrice
+
+        matrice[i] = [0]*len(l)
+        x = 0
+        for x in range (len(l)):
+            c = calcul_distance(list_of_points[l[i]], list_of_points[l[x]])
+            matrice[i][x] = c
     
-    #départ sup la valeur de la liste
-    j = 0
-    for j in range (len(l) - 1):
-        if l[j] == first_point:
-            del l[j]
-            break
+    print(matrice)
     
-    pt = first_point
-    tour1 = True
-
-    while len(l) != 0:
-        
-        if (tour1 == False): #au premier tour on ne peut pas écraser la valeur de d1 par la suite oui car d sera égal à la distance totale
-            pt = kk #car on prend le 2e
-            
-            chemin.append(z)
-            chemin.append(pt) #on rajoute les 2 dans la liste finale
-            n = 0
-            for n in range (len(l) - 1):
-                if (l[n] == pt):
-                    del l[n]
-            n = 0
-            for n in range (len(l) - 1):   
-                if (l[n] == z):
-                    del l[n]
-
-            ctotal = round(calcul_circuit(list_of_points, chemin))
-        
-        if len(l) < 1:
-            break
-        
-        i = 0
-        z = 0
-        k = 0
-            
-        if len(l) <= 1:
-            break
-            
-        d1 = calcul_distance(list_of_points[pt], list_of_points[l[i]])
-        
-        j = 0
-        dspec = d1 + calcul_distance(list_of_points[l[i]], list_of_points[l[j]])
-            
-        if l[i] == l[j]:
-            dspec = d1 + calcul_distance(list_of_points[l[i]], list_of_points[l[j + 1]])
-            k = l[j + 1]
-
-        for j in range (len(l) - 1): #on cherche quelle 2e valeur crée le chemin le + court avec la 1ere valeur étudiée
-                
-            dnext = d1 + calcul_distance(list_of_points[l[i]], list_of_points[l[j + 1]])
-            if(l[j] == l[i]) or (l[j + 1] == l[i]):
-                continue
-                
-            if dnext < dspec:
-                dspec = dnext #k z et kk sont les indices de la liste...
-                k = l[j + 1]
-                
-        if i == 0:
-            dOficiel = dspec
-            z = l[i]
-            kk = k
-
-        if i != 0:
-            if dspec < dOficiel:
-                dOficiel = dspec
-                z = l[i]
-                kk = k
-        
-        i=i+1
-        tour1 = False
-
-    print('distance finale')
-    print(dOficiel)
-    print(z)
-    print(kk) #à continuer en faisant comme avant mais avec la double boucle...
     
-    #d = 0 
-   
+    #Dijkstra(matrice, first_point, None)
 
-        #d = d1 + calcul_distance(list_of_points[pt], list_of_points[l[0]])
-           
-        
+    
+    #return list(list_of_points.keys())
+
+def great_algorithmdico(first_point, list_of_points):
+    
+    l = list(list_of_points.keys())
+    matrice = dict()
+    matmat = dict()
+
+    i = 0
+    for i in range (len(l)): #génère une matrice
+
+        matrice[l[i]] = matmat
+        x = 0
+        for x in range (len(l)):
+            c = calcul_distance(list_of_points[l[i]], list_of_points[l[x]])
+            matrice[l[i]][l[x]] = c
+    
+    return matrice
 
 
 
-    #return chemin
-    #return list(list_of_points.keys())'''
+def dijkstra(graph,position,dest,visited=[],distances={},predecessors={}):
+    
+    # On verifie si les 2 points sont dans notre réseau
+    if position not in graph:
+        print('Le point de départ n\'existe pas.')
+    if dest not in graph:
+        print('Le point d\'arrivé n\'existe pas.')    
+    
+    if position != dest:
+        # On commence en mettant le point de départ à 0
+        if not visited: 
+            distances[position]=0
+        # Puis nous visitons les points voisins pour calculer leurs distances 
+        for neighbor in graph[position] :
+            if neighbor not in visited:
+                new_distance = distances[position] + graph[position][neighbor]
+                if new_distance < distances.get(neighbor,float('inf')):
+                    distances[neighbor] = new_distance
+                    predecessors[neighbor] = position
+        # On marque les points voisins comme étant visités
+        visited.append(position)
+        # Maintenant que les points voisins sont visités, on choisit le prochain point avec le poids le plus bas.
+
+        unvisited={}   
+        for p in graph:
+            if p not in visited:
+                unvisited[p] = distances.get(p,float('inf'))        
+        dijkstra(graph,min(unvisited, key=unvisited.get),dest,visited,distances,predecessors)
+    else :
+        # Maintenant que tous les points dans le réseau sont visités, on obtient le chemin 
+        path=[]
+        pred=dest
+        while pred != None:
+            path.append(pred)
+            pred=predecessors.get(pred,None)
+        print('Le chemin le plus court (reste a mettre a l\'envers) : '+str(path)+" avec une distance de "+str(distances[dest]))
+
+
+    
+
+
+# Le réseau est donné sous la forme de "graph"
+
+
+
 
 class Tree(object):
 
@@ -184,82 +177,6 @@ def createLittleTree(i, l, list_of_points):
     newTree = Tree(l[i], l2, list_of_points)
 
 
-def optimal_algorithm(first_point, list_of_points):
-    
-    l = list(list_of_points.keys())
-
-    x = 0
-    for x in range (len(l) - 1):
-        if l[x] == first_point:
-            del l[x]
-            break
-    
-    '''for i in range (len(l)):
-        createLittleTree(i, l, list_of_points)'''
-    
-    
-    newTree = Tree(first_point, l, list_of_points)
-    newTree.builtTree()
-    #return result
-    #return list(list_of_points.keys())
-
-
-def autreFonction(listlist, nb, l, chemin, liste, c): #enlever nb
-
-    taille = len(l) 
-    #l2 = l.copy() ptt plus besoins... au lieu d eprendre l2, utiliser listlist son index = etape + 1 et on enlève les éléments comme ça
-    
-    etape = nb + 1#ptt inutile pour etape...
-    
-    while((listlist[nb] != None)):   #avant c'était l2
-        #condition qui vérifie si le pt existe dans le chemin 
-        i = 0
-        for i in range (taille):
-            if ((l[i] in chemin) and len(chemin) != (taille + 1)):
-                #nb = nb+1
-                continue 
-            
-            elif (len(chemin) != (taille + 1)):
-                chemin.append(l[i])
-                #del l2[i]
-                del listlist[etape - 1][i] #pb de del...
-                nb = nb+1
-
-            elif (l[i] in chemin):
-                if (chemin.index(l[i]) < etape):
-                    continue
-                else:    
-                    chemin[etape] = l[i] #puis del de l2 grâce à une boucle
-                    x = 0
-                    del listlist[etape - 1][x]
-                       
-            else:  
-                chemin[etape] = l[i] #puis del de l2 grâce à une boucle
-                x = 0
-                del listlist[etape - 1][x]
-                '''for x in range (len(listlist[nb]) - 1): #on enlève le -1
-                    if listlist[nb - 1][x] == l[i]:#av l2[x]
-                        #del l2[x]
-                        del listlist[nb - 1][x]
-                        break  '''     
-            
-            if (etape != (len(l))):
-                c1 = autreFonction(listlist, nb, l, chemin, liste, c) #trouver un moyen de garder l2
-                #ou créer autant de listes diff dès le départ que l'on numérote selon l'étape..
-            
-            if (nb >= (len(l))): #car nb dépassera 
-                c1 = calcul_circuit(liste, chemin)
-                nextRoad = True
-                if c1<c:
-                    c=c1
-                break
-        
-        if (nextRoad == True):
-            nextRoad = False
-            break 
-    return c
-
-
 def get_small_list_of_points():
     list_of_points = {
         0: (1, 3),
@@ -289,7 +206,8 @@ def test_small_better_algorithm():
     #assert result[0] == first_point
 
 #print(test_small_better_algorithm())
-print(optimal_algorithm(0, l))
+r = great_algorithmdico(0, l)
+print(dijkstra(r, 0, 0))
 
 '''print(calcul_distance(l[0], l[1]))
 print(calcul_distance(l[0], l[2]))
