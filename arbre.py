@@ -95,7 +95,7 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
         visitedPoints.append(tmp)
         unvisited.remove(tmp)
         min=math.inf
-        a=tmp
+        a=tmp 
     return visitedPoints
 
      
@@ -130,8 +130,6 @@ def optimal_algorithm(first_point, list_of_points):
     n = Node(list_of_points, first_point)
     (l, len) = n.getBestPath()
     l = list(l)
-    print(len)
-    print(l)
     return l
 
 
@@ -151,13 +149,26 @@ def get_small_list_of_points():
     return list_of_points
 
 
+def get_tricky_points():
+    list_of_points = {
+        0: (0, 0),
+        1: (0, 1),
+        2: (0, 3),
+        3: (0, 11),
+        4: (0, -21),
+        5: (0, -5),
+        6: (0, -1),
+    }
+    return list_of_points
+
+
 def test_calcul_distance():
     a = (-3, -2)
     b = (5, 2)
 
     assert round(calcul_distance(a, b), 3) == 8.944
-test_calcul_distance()
 
+test_calcul_distance()
 def test_calcul_min_circuit():
     a = (-3, -2)
     b = (5, 2)
@@ -165,7 +176,7 @@ def test_calcul_min_circuit():
     cycle = ['a', 'b']
 
     assert round(calcul_circuit(list_of_points, cycle), 3) == 17.889
-test_calcul_min_circuit()
+test_calcul_distance()
 
 def test_calcul_circuit():
     list_of_points = get_small_list_of_points()
@@ -180,11 +191,9 @@ def test_return_sized():
 
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
-    print(calcul_circuit(list_of_points,result))
     assert len(result) == 10
     assert result[0] == first_point
 test_return_sized()
-
 
 def test_small_nearest_neighbor():
     list_of_points = get_small_list_of_points()
@@ -193,8 +202,6 @@ def test_small_nearest_neighbor():
     result = nearest_neighbor_algorithm(first_point, list_of_points)
     assert len(result) == 10
     assert result[0] == first_point
-    print(result)
-    print(calcul_circuit(list_of_points,result))
     assert round(calcul_circuit(list_of_points, result)) <= 27
 test_small_nearest_neighbor()
 
@@ -226,9 +233,44 @@ def test_small_optimal_algorithm():
     result = optimal_algorithm(first_point, list_of_points)
     assert len(result) == 10
     assert result[0] == first_point
-
-    """I will add some tests here"""
+    circuit_cost = calcul_circuit(list_of_points, result)
+    assert round(circuit_cost) <= 27
+    assert round(circuit_cost, 2) == 24.75
+    assert result == [0, 2, 3, 1, 7, 5, 9, 6, 8, 4]
+test_small_optimal_algorithm
 
 def test_big_optimal_algorithm():
     """I will test with a lot of points"""
     pass
+
+
+def test_tricky_nearest_neighbor():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = nearest_neighbor_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) <= 80
+
+test_tricky_nearest_neighbor()
+def test_tricky_better_algorithm():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = great_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) < 80
+
+
+def test_tricky_optimal_algorithm():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = optimal_algorithm(first_point, list_of_points)
+    print(result)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) == 64
+test_tricky_optimal_algorithm()
