@@ -115,7 +115,35 @@ class Matrice (object):
         return chemin
 
 
+def mailleurAlgo(): 
 
+    #idée: prendre les 2 + proches du first_point( 1 et 2) remplir un tab avec [0,1] au début et l'autre pt le + proche, 2 à la fin
+    #ensuite reprendre l'algo naïf dès qu'il y a une égalité, continuer 2 fois les chemins..
+    #bon j'essaye des trucs mais c bofbof
+
+
+    
+    matrice = great_algorithmdico()
+    unvisited = list(list_of_points.keys())
+    visitedPoints=list()
+    visitedPoints2=list()
+    visitedPoints.append(first_point)
+    unvisited.remove(first_point)
+    a = first_point
+    b = first_point
+    min=calcul_distance(list_of_points.get(a),list_of_points.get(a))
+    
+    while unvisited :
+        for b in range (len(unvisited)):
+            distance = calcul_distance(list_of_points.get(a),list_of_points.get(unvisited[b]))
+            if(min>distance or min==0):
+                min = distance
+                tmp = unvisited[b]
+        visitedPoints.append(tmp)
+        unvisited.remove(tmp)
+        min=math.inf
+        a=tmp
+    return visitedPoints
 
 
 
@@ -151,9 +179,9 @@ def test_small_better_algorithm():
     #assert result[0] == first_point
 
 #print(test_small_better_algorithm())
-r = great_algorithmdico(0, l)
-mat = Matrice(0, l, r)
-chemin = mat.dijkstra()
-print(chemin)
-print(round(calcul_circuit(l, chemin)))
+r = great_algorithm(0, l)
+print(r)
+test = [0, 1, 7, 5, 9, 6, 4, 8, 3, 2] #ça m'a donné 28...
+c = calcul_circuit(l, test)
+print(c)
 
