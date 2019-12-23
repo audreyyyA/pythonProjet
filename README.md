@@ -1,9 +1,3 @@
----
-title: Robot Tour Optimisation
-created: '2019-12-23T00:43:46.246Z'
-modified: '2019-12-23T02:47:48.287Z'
----
-
 # Robot Tour Optimisation
 
 ## Description
