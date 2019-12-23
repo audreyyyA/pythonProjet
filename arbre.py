@@ -108,15 +108,27 @@ def great_algorithm(first_point, list_of_points):
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a list of point to visit, starting from first_point.
     """
-    unvisited = list(list_of_points.keys())
-    visited = list()
+    chemin = nearest_neighbor_algorithm(first_point, list_of_points)
+    dmin = calcul_circuit(list_of_points, chemin)
+    chemin2 = chemin.copy()
+    x = 1
+    v1 = chemin2[x]
+    chemin2[x] = chemin2[x+1]
+    chemin2[x+1] = v1
+    dtmp = calcul_circuit(list_of_points, chemin2)
 
-    visited.append(first_point)
-    unvisited.remove(first_point)
+    while(dmin<dtmp):
 
-    #for i in range (len(list_of_points)-1):
+        if (x == (len(chemin) - 1)):
+            x = 0
 
-    return list(list_of_points.keys())
+        x+=1
+        v1 = chemin2[x]
+        chemin2[x] = chemin2[x+1]
+        chemin2[x+1] = v1
+        dtmp = calcul_circuit(list_of_points, chemin2)
+    
+    return dtmp
 
 
 def optimal_algorithm(first_point, list_of_points):

@@ -114,24 +114,20 @@ class Matrice (object):
         chemin.append(self.list_of_points[0])
         return chemin
 
-
-def mailleurAlgo(): 
-
-    #idée: prendre les 2 + proches du first_point( 1 et 2) remplir un tab avec [0,1] au début et l'autre pt le + proche, 2 à la fin
-    #ensuite reprendre l'algo naïf dès qu'il y a une égalité, continuer 2 fois les chemins..
-    #bon j'essaye des trucs mais c bofbof
-
-
-    
-    matrice = great_algorithmdico()
+def nearest_neighbor_algorithm(first_point, list_of_points):
+    """
+    Implement the nearest_neighbor algorithm.
+    first_point: label of the first point
+    list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
+    return a list of point to visit, starting from first_point.
+    """
     unvisited = list(list_of_points.keys())
     visitedPoints=list()
-    visitedPoints2=list()
     visitedPoints.append(first_point)
     unvisited.remove(first_point)
     a = first_point
-    b = first_point
     min=calcul_distance(list_of_points.get(a),list_of_points.get(a))
+
     
     while unvisited :
         for b in range (len(unvisited)):
@@ -145,9 +141,29 @@ def mailleurAlgo():
         a=tmp
     return visitedPoints
 
+def mailleurAlgo(first_point, list_of_points): #c'est l'algo 2!!!
 
+    chemin = nearest_neighbor_algorithm(first_point, list_of_points)
+    dmin = calcul_circuit(list_of_points, chemin)
+    chemin2 = chemin.copy()
+    x = 1
+    v1 = chemin2[x]
+    chemin2[x] = chemin2[x+1]
+    chemin2[x+1] = v1
+    dtmp = calcul_circuit(list_of_points, chemin2)
 
+    while(dmin<dtmp):
 
+        if (x == (len(chemin) - 1)):
+            x = 0
+
+        x+=1
+        v1 = chemin2[x]
+        chemin2[x] = chemin2[x+1]
+        chemin2[x+1] = v1
+        dtmp = calcul_circuit(list_of_points, chemin2)
+    
+    return dtmp
 
 
 def get_small_list_of_points():
@@ -183,5 +199,7 @@ r = great_algorithm(0, l)
 print(r)
 test = [0, 1, 7, 5, 9, 6, 4, 8, 3, 2] #ça m'a donné 28...
 c = calcul_circuit(l, test)
+print(c)
+c = mailleurAlgo(0, l)
 print(c)
 
