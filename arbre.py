@@ -1,6 +1,5 @@
+import math
 
-# Your code should work with python 3.6 or less. Function/Method from python 3.8 are prohibited !!!
-import math  # https://docs.python.org/3/library/math.html
 
 class Node(object):
 
@@ -13,10 +12,9 @@ class Node(object):
         self.listOfNodes = list()
         self.listOfPoints = listOfPoints
         self.visitedPoints.append(origin)
-        
 
         for point in listOfPoints.keys():
-            if not point in self.visitedPoints:
+            if point not in self.visitedPoints:
                 self.listOfNodes.append(Node(self.listOfPoints, point, self.visitedPoints))
     
 
@@ -108,27 +106,29 @@ def great_algorithm(first_point, list_of_points):
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a list of point to visit, starting from first_point.
     """
-    chemin = nearest_neighbor_algorithm(first_point, list_of_points)
-    dmin = calcul_circuit(list_of_points, chemin)
-    chemin2 = chemin.copy()
+    naive_path = nearest_neighbor_algorithm(first_point, list_of_points)
+    dmin = calcul_circuit(list_of_points, naive_path)
+    better_path = naive_path.copy()
     x = 1
-    v1 = chemin2[x]
-    chemin2[x] = chemin2[x+1]
-    chemin2[x+1] = v1
-    dtmp = calcul_circuit(list_of_points, chemin2)
+    print(dmin)
+    #Permutation
+    tmp = better_path[x]
+    better_path[x] = better_path[x+1]
+    better_path[x+1] = tmp
+    dtmp = calcul_circuit(list_of_points, better_path)
 
-    while(dmin<dtmp):
+    while(dmin<=dtmp):
 
-        if (x == (len(chemin) - 1)):
+        if (x == (len(naive_path) - 2)):
             x = 0
 
         x+=1
-        v1 = chemin2[x]
-        chemin2[x] = chemin2[x+1]
-        chemin2[x+1] = v1
-        dtmp = calcul_circuit(list_of_points, chemin2)
-    
-    return dtmp
+        tmp = better_path[x]
+        better_path[x] = better_path[x+1]
+        better_path[x+1] = tmp
+        dtmp = calcul_circuit(list_of_points, better_path)
+    print(dtmp)
+    return better_path
 
 
 def optimal_algorithm(first_point, list_of_points):
@@ -231,7 +231,7 @@ def test_small_better_algorithm():
     assert result[0] == first_point
 
     """I will add some tests here"""
-
+test_small_better_algorithm()
 
 def test_big_better_algorithm():
     """I will test with a lot of points"""
@@ -249,7 +249,7 @@ def test_small_optimal_algorithm():
     assert round(circuit_cost) <= 27
     assert round(circuit_cost, 2) == 24.75
     assert result == [0, 2, 3, 1, 7, 5, 9, 6, 8, 4]
-test_small_optimal_algorithm
+test_small_optimal_algorithm()
 
 def test_big_optimal_algorithm():
     """I will test with a lot of points"""
@@ -274,7 +274,7 @@ def test_tricky_better_algorithm():
     assert len(result) == 7
     assert result[0] == first_point
     assert round(calcul_circuit(list_of_points, result)) < 80
-
+test_tricky_better_algorithm()
 
 def test_tricky_optimal_algorithm():
     list_of_points = get_tricky_points()
