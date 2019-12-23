@@ -1,151 +1,150 @@
-# Your code should work with python 3.6 or less. Function/Method from python 3.8 are prohibited !!!
-import math #https://docs.python.org/3/library/math.html
+import math
 
-from math import*
+
+class Node(object):
+
+    def __init__(self, listOfPoints, origin, visited=None):
+        assert origin in listOfPoints.keys()
+        if visited is None:
+            self.visitedPoints = list()
+        else:
+            self.visitedPoints = list(visited)
+        self.listOfNodes = list()
+        self.listOfPoints = listOfPoints
+        self.visitedPoints.append(origin)
+
+        for point in listOfPoints.keys():
+            if point not in self.visitedPoints:
+                self.listOfNodes.append(
+                    Node(self.listOfPoints, point, self.visitedPoints))
+
+    def getPathLength(self):
+        assert not self.listOfNodes
+        i = calcul_circuit(self.listOfPoints, self.visitedPoints)
+        return i
+
+    def getBestPath(self):
+        if not self.listOfNodes:
+            return self.visitedPoints, self.getPathLength()
+        else:
+            min = math.inf
+            l = list()
+            for Node in self.listOfNodes:
+                (tmpList, tmpLen) = Node.getBestPath()
+                if (tmpLen < min):
+                    min = tmpLen
+                    l = tmpList
+            return l, min
+
 
 def calcul_distance(first_point_value, second_point_value):
-
-    cal1 = ((second_point_value[0]) - (first_point_value[0]))**2
-    cal2 = ((second_point_value[1]) - (first_point_value[1]))**2
-    result = cal1 + cal2
-    
-    d = sqrt(result)
-
-    return d
-
+    """
+        Distance between two points calculation
+        first_point_value : tuple (x, y) of a point
+        second_point_value : tuple (x, y) of a point
+        return a float, the distance between those two point
+    """
+    x = pow(second_point_value[0] - first_point_value[0], 2)
+    y = pow(second_point_value[1] - first_point_value[1], 2)
+    return math.sqrt(x+y)
 
 
 def calcul_circuit(list_of_points, cycle):
-    
+    """
+        Circuit length calculation
+        first_point: label of the first point
+        list_of_points: dict of all the point,
+        the key is the label, the value is a tuple (x, y)
+        return a float, a circuit length
+    """
     res = 0
-    i = 0
+    for i in range(len(cycle)-1):
+        first_point_value = list_of_points.get(cycle[i])
+        second_point_value = list_of_points.get(cycle[i+1])
+        res += calcul_distance(first_point_value, second_point_value)
 
-    for i in range(len(cycle) - 1):
-        
-        v = cycle[i]
-        v2 = cycle[i + 1]
-        
-        d = calcul_distance(list_of_points[v], list_of_points[v2])
-        res = res + d 
+    index_lastpoint = len(cycle)-1
+    res += calcul_distance(list_of_points.get(cycle[0]), list_of_points.get(
+        cycle[index_lastpoint]))
 
-    x = cycle[0]
-    y = cycle[len(cycle) - 1]
-    lastD = calcul_distance(list_of_points[y], list_of_points[x])
-    result = res + lastD
-
-    return result
+    return res
 
 
 def nearest_neighbor_algorithm(first_point, list_of_points):
-    
-    l = list(list_of_points.keys())
-    chemin = list()
-    chemin.append(first_point)
-    
-    #départ sup la valeur de la liste
-    j = 0
-    for j in range (len(l) - 1):
-        if l[j] == first_point:
-            del l[j]
-            break
-    
-    dtest = calcul_distance(list_of_points[first_point], list_of_points[l[0]])
-    z = 0
-    i = 0
-    for i in range (len(l) - 1):
+    """
+    Implement the nearest_neighbor algorithm.
+    first_point: label of the first point
+    list_of_points: dict of all the point, the key is the label,
+    the value is a tuple (x, y)
+    return a list of point to visit, starting from first_point.
+    """
+    unvisited = list(list_of_points.keys())
+    visitedPoints = list()
+    visitedPoints.append(first_point)
+    unvisited.remove(first_point)
+    a = first_point
+    min = calcul_distance(list_of_points.get(a), list_of_points.get(a))
 
-        d2 = calcul_distance(list_of_points[first_point], list_of_points[l[i + 1]])
-        if d2 < dtest:
-                dtest = d2
-                z = i + 1
-    
-    
-    #print(dtest)
-    d = 0 
-    while len(l) != 0:
-        
-        #print(l[z])
-        #print(d)
-        pt = l[z]
-        chemin.append(pt)
-        
-        del l[z]
-        if len(l) < 1:
-            break
-
-        d = calcul_distance(list_of_points[pt], list_of_points[l[0]])
-            
-        t = 0
-        z = 0
-        
-        for t in range (len(l) - 1):
-            d2 = calcul_distance(list_of_points[pt], list_of_points[l[t + 1]])
-                    
-            if d2 < d:
-                d = d2
-                z = t + 1
-    
-    return chemin
-    #return list(list_of_points.keys())
+    while unvisited:
+        for b in range(len(unvisited)):
+            distance = calcul_distance(
+                list_of_points.get(a), list_of_points.get(unvisited[b]))
+            if(min > distance or min == 0):
+                min = distance
+                tmp = unvisited[b]
+        visitedPoints.append(tmp)
+        unvisited.remove(tmp)
+        min = math.inf
+        a = tmp
+    return visitedPoints
 
 
-'''def great_algorithm(first_point, list_of_points):
-    
-   l = list(list_of_points.keys())
-    chemin = list()
-    chemin.append(first_point)
-    
-    #départ sup la valeur de la liste
-    j = 0
-    for j in range (len(l) - 1):
-        if l[j] == first_point:
-            del l[j]
-            break
-    
-    d1 = calcul_distance(list_of_points[first_point], list_of_points[l[0]])
-    z = 0
-    i = 0
-    for i in range (len(l) - 1):
+def great_algorithm(first_point, list_of_points):
+    """
+        Implement a good algorithm to resolve the case.
+        first_point: label of the first point
+        list_of_points: dict of all the point,
+        the key is the label, the value is a tuple (x, y)
+        return a list of point to visit, starting from first_point.
+    """
+    naive_path = nearest_neighbor_algorithm(first_point, list_of_points)
+    dmin = calcul_circuit(list_of_points, naive_path)
+    better_path = naive_path.copy()
+    x = 1
+# Permutation
+    tmp = better_path[x]
+    better_path[x] = better_path[x+1]
+    better_path[x+1] = tmp
+    dtmp = calcul_circuit(list_of_points, better_path)
 
-        d2 = calcul_distance(list_of_points[first_point], list_of_points[l[i + 1]])
-        if d2 < d1:
-                d1 = d2
-                z = i + 1
+    while(dmin <= dtmp):
 
-    d = 0 
-    while len(l) != 0:
-        
-        #print(l[z])
-        #print(d)
-        pt = l[z]
-        chemin.append(pt)
-        
-        del l[z]
-        if len(l) < 1:
-            break
+        if (x == (len(naive_path) - 2)):
+            x = 0
 
-        d = d1 + calcul_distance(list_of_points[pt], list_of_points[l[0]])
-            
-        t = 0
-        z = 0
-        
-        for t in range (len(l) - 1):
-            d2 = calcul_distance(list_of_points[pt], list_of_points[l[t + 1]])
-                    
-            if d2 < d:
-                d = d2
-                z = t + 1
+        x += 1
+        tmp = better_path[x]
+        better_path[x] = better_path[x+1]
+        better_path[x+1] = tmp
+        dtmp = calcul_circuit(list_of_points, better_path)
 
-    return list(list_of_points.keys())'''
+    return better_path
 
 
 def optimal_algorithm(first_point, list_of_points):
     """
-        faire tout les chemins possibles et calculer son circuit.. à chaque fois que l'on parcourt un nouveau chemin comparer avec celui d'av
-        faire une classe arbre, créer tout les arbres.. parcourir ensuite... et calculer puis comparer
+        Implement an optimal algorithm.
+        This solution is the best, but it is slow
+        first_point: label of the first point
+        list_of_points: dict of all the point,
+        the key is the label, the value is a tuple (x, y)
+        return a list of point to visit, starting from first_point.
     """
 
-    return list(list_of_points.keys())
+    n = Node(list_of_points, first_point)
+    (l, len) = n.getBestPath()
+    l = list(l)
+    return l
 
 
 def get_small_list_of_points():
@@ -164,15 +163,28 @@ def get_small_list_of_points():
     return list_of_points
 
 
+def get_tricky_points():
+    list_of_points = {
+        0: (0, 0),
+        1: (0, 1),
+        2: (0, 3),
+        3: (0, 11),
+        4: (0, -21),
+        5: (0, -5),
+        6: (0, -1),
+    }
+    return list_of_points
+
+
 def test_calcul_distance():
     a = (-3, -2)
     b = (5, 2)
 
-    #result = round(calcul_distance(a,b), 3)
-    #return result
     assert round(calcul_distance(a, b), 3) == 8.944
 
-#print(test_calcul_distance())
+
+test_calcul_distance()
+
 
 def test_calcul_min_circuit():
     a = (-3, -2)
@@ -180,9 +192,10 @@ def test_calcul_min_circuit():
     list_of_points = {'a': a, 'b': b}
     cycle = ['a', 'b']
 
-    #result = round(calcul_circuit(list_of_points, cycle), 3)
-    #return result
     assert round(calcul_circuit(list_of_points, cycle), 3) == 17.889
+
+
+test_calcul_distance()
 
 
 def test_calcul_circuit():
@@ -190,22 +203,22 @@ def test_calcul_circuit():
 
     cycle = list(list_of_points.keys())
     distance = calcul_circuit(list_of_points, cycle)
-    
-    #result = round(distance, 3)
-    #return result
-    
     assert round(distance, 3) == 38.483
+
+
+test_calcul_circuit()
+
 
 def test_return_sized():
     list_of_points = get_small_list_of_points()
 
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
+    assert len(result) == 10
+    assert result[0] == first_point
 
-    print(result)
 
-    #assert len(result) == 10
-    #assert result[0] == first_point
+test_return_sized()
 
 
 def test_small_nearest_neighbor():
@@ -213,16 +226,15 @@ def test_small_nearest_neighbor():
 
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
-    
-    #assert len(result) == 10
-    #assert result[0] == first_point
-    #assert round(calcul_circuit(list_of_points, result)) <= 27
-    c = round(calcul_circuit(list_of_points, result))
-    return c
+    assert len(result) == 10
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) <= 27
 
-print(test_small_nearest_neighbor())
 
-'''def test_big_nearest_neighbor():
+test_small_nearest_neighbor()
+
+
+def test_big_nearest_neighbor():
     """I will test with a lot of points"""
     pass
 
@@ -238,6 +250,9 @@ def test_small_better_algorithm():
     """I will add some tests here"""
 
 
+test_small_better_algorithm()
+
+
 def test_big_better_algorithm():
     """I will test with a lot of points"""
     pass
@@ -250,11 +265,54 @@ def test_small_optimal_algorithm():
     result = optimal_algorithm(first_point, list_of_points)
     assert len(result) == 10
     assert result[0] == first_point
+    circuit_cost = calcul_circuit(list_of_points, result)
+    assert round(circuit_cost) <= 27
+    assert round(circuit_cost, 2) == 24.75
+    assert result == [0, 2, 3, 1, 7, 5, 9, 6, 8, 4]
 
-    """I will add some tests here"""
+
+test_small_optimal_algorithm()
 
 
 def test_big_optimal_algorithm():
     """I will test with a lot of points"""
     pass
-'''
+
+
+def test_tricky_nearest_neighbor():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = nearest_neighbor_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) <= 80
+
+
+test_tricky_nearest_neighbor()
+
+
+def test_tricky_better_algorithm():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = great_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) < 80
+
+
+test_tricky_better_algorithm()
+
+
+def test_tricky_optimal_algorithm():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = optimal_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) == 64
+
+
+test_tricky_optimal_algorithm()
